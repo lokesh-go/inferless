@@ -75,3 +75,34 @@ Serverless GPU offering to help with scaling machine learning inference without 
   - ###### Approach
     - Here Can have final Deploy API to execute inputed ML Modules on the serverless GPU.
 
+## High Level Backend Architecture
+
+I have designed a very high level backend architecture here:
+
+<p align="center"><img src="https://github.com/lokesh-go/inferless/assets/31778886/56fa8ed5-742e-44ed-bd4f-aa064283c0a6" alt="Inferless" width="750px"/></p>
+
+##### Explanation:
+
+###### Devided product features into two parts:
+- **Serves the UI data:** The configuration data options we are showing on Front end these all will serve via `get-meta-deails-api`. Suppose:
+  - We will have to show options data like: frameworks list, remote repo list and its configuration etc...
+  - We can simply devide these use cases into different meta categories and take the unique `meta-identifier` which will change the options data basis of meta-id.
+
+- **Deployment ML Models:** When all things has been added and configuration has been done then deploying ML models using this API.
+
+
+###### Working Flows
+- **Serves the UI data:**
+  - Client reuqest has came for getting meta data.
+  - Request came it via CDN, firstly CDN rule finds this request data in CDN Cached. If details found then returns the response otherwise request will forward to the `backend-service-app`.
+  - At the `backend-service-app`, It hits the Cache first, If found then returns the response to the Client otherwise get record from Datastore, write it into Cache then return the response.
+
+- **Deployment ML Models:** 
+  - All reviewed data with Models receive via `deploy-ml-model` API.
+  - Performing some business logic here and generating an unique Container or Process Id.
+  - Calls the Cloud GPU Computing Engine with process Id and request including Min & Max scaling counts.
+  - Cloud GPU Computing Engine will create a Container basis of Model inference work load.
+
+
+## Exposure on Cloud GPU Computing Engine
+
