@@ -106,3 +106,28 @@ I have designed a very high level backend architecture here:
 
 ## Exposure on Cloud GPU Computing Engine
 
+<p align="center"><img src="https://github.com/lokesh-go/inferless/assets/31778886/298ce7be-364d-40ff-b09a-49ff8ebde4f6" alt="Inferless" width="750px"/></p>
+
+##### Explanation:
+
+- When Backend app received the request to deploy ML Models.
+- Then BE hits the Cloud GPU Computing Engine with client request.
+- Suppose request includes:
+  - Execute Model ( **_Text data converts to Image_** ).
+  - Min pod count is 2.
+  - Max pod count is 5.
+  - Scaling configuration assume:
+    - When 70% of CPU / GPU / Memory utilisation will exceed then will add start new GPU compute engine node.
+- Request will taken by API Server component.
+- **API Server** will create request configurations into Datastore. Example:
+  - Request Id: ad8767dfda86877
+  - Min Pod: 2
+  - Max Pod: 5
+  - Scaling functionality: Enabled
+  - Scaling Rule: >= 70% Utilisation ( GPU / CPU / Memory)
+- Now **Controller** has responsibility to maintain pod count basis request configuration.
+- **Controller** will inform **Scheduler** to schedule the pods to start.
+- Suppose, A request came and It has very high computing ML Model. So,
+  - Firstly, 2 pods will start and computing the ML Models.
+  - Due to high computing, pod GPU will reached at 70% then, **Load balancer** play role to scale the GPU pod.
+- When Pods has started and running then **Users** can request It via APIs.
